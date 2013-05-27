@@ -4,58 +4,68 @@ import edu.um.arq.umflix.catalogservice.CatalogService;
 import java.util.List;
 import java.util.ResourceBundle;
 import edu.um.arq.umflix.catalogservice.exception.DaoException;
+import edu.um.arq.umflix.catalogservice.mockclasses.AuthenticationHandler;
 import edu.um.arq.umflix.catalogservice.mockclasses.Movie;
 import edu.um.arq.umflix.catalogservice.mockclasses.MovieDao;
+import edu.um.arq.umflix.catalogservice.mockclasses.InvalidTokenException;
+import org.apache.log4j.Logger;
 
 /**
- * Created with IntelliJ IDEA.
- * User: icalleros
- * Date: 25/05/13
- * Time: 07:40 PM
+ *
  * Implementation of the CatalogService.
+ * Instances an AuthenticationHandler for token validation.
+ * Instances a MovieDao for getting Movie's list, returns it.
+ * Throws InvalidTokenException instead if the token was invalid.
+ *
  */
 
 public class CatalogServiceImpl implements CatalogService {
 
-    // properties, configuration file
-    private static final String PROPERTIES = "properties";
-
-    // resource bundle for those properties
+    // Configuration file name
+    private static final String PROPERTIES = "dao_factory";
     private static  ResourceBundle rb = ResourceBundle.getBundle(PROPERTIES);
 
-    // key for the name of the class that implements MovieDao
+    // Key for the name of the classes that implement MovieDao and AuthenticationHandler
     private static final String MOVIE_DAO_IMPL_K = "MOVIE_DAO_IMPL";
+    private static final String AUTH_HANDLER_IMPL_K = "AUTH_HANDLER_IMPL";
 
-    public List<Movie> search(String movie,String token) throws DaoException {
+    private static Logger logger = Logger.getLogger("CatalogServiceImpl.class");
+
+    public List<Movie> search(String movie,String token) throws DaoException, InvalidTokenException {
         MovieDao movieDao = (MovieDao)getDao(rb.getString(MOVIE_DAO_IMPL_K));
+        AuthenticationHandler authHandler = (AuthenticationHandler)getDao(rb.getString(AUTH_HANDLER_IMPL_K));
            /*
                    For impl:
                             Dependency: ModelStorage
                             Movie
                             MovieDao has List <Movie> getMovieList(String variable);
+
+                            AuthenticationHandler
+                            has public boolean validateToken(String token,List<Role> roles) throws InvalidTokenException;
+                                public String authenticate(User user);
+                                public User getUserOfToken(String token) throws InvalidTokenException;
             */
         return null;
     }
 
     /*
-        Creates a new instance of a class, given its name - dao.
-        Throws DaoException if there's an error and prints the stack trace.
-     */
-    public static Object getDao(String dao) throws DaoException {
+    *
+    *   @param dao Name of the class to get.
+    *   @return Returns a new instance of the class.
+    *   @throws DaoException Throws when there was an error accessing persistence classes.
+    *
+    */
+    private static Object getDao(String dao) throws DaoException {
         try {
             return Class.forName(dao).newInstance();
-        } catch (InstantiationException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            throw new DaoException();
-        } catch (IllegalAccessException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            throw new DaoException();
-        } catch (ClassNotFoundException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            throw new DaoException();
+        } catch (Exception exc) {
+            if(exc instanceof InstantiationException || exc instanceof IllegalAccessException ||
+                    exc instanceof ClassNotFoundException || exc instanceof NoSuchFieldException ) {
+                logger.error("Cannot getDao",exc);
+                throw new DaoException();
+            } else {
+                throw new RuntimeException(exc);
+            }
         }
     }
 }
