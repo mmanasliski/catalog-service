@@ -6,7 +6,7 @@ package edu.um.arq.umflix.catalogservice.exception;
  *
  */
 
-public class DaoException extends Exception {
+public class DaoException extends RuntimeException {
 
     static final long serialVersionUID = 1;
 

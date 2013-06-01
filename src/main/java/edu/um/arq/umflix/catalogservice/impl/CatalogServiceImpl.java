@@ -55,7 +55,7 @@ public class CatalogServiceImpl implements CatalogService {
     *   @throws DaoException Throws when there was an error accessing persistence classes.
     *
     */
-    private static Object getDao(String dao) throws DaoException {
+    private static Object getDao(String dao){
         try {
             return Class.forName(dao).newInstance();
         } catch (Exception exc) {
