@@ -2,8 +2,8 @@ package edu.um.arq.umflix.catalogservice;
 
 import java.util.List;
 import edu.um.arq.umflix.catalogservice.exception.DaoException;
-import edu.um.arq.umflix.catalogservice.mockclasses.Movie;
-import edu.um.arq.umflix.catalogservice.mockclasses.InvalidTokenException;
+import edu.umflix.authenticationhandler.exceptions.InvalidTokenException;
+import edu.umflix.model.Movie;
 
 /* *
  *
@@ -22,5 +22,5 @@ public interface CatalogService {
     * @throws InvalidTokenException Throws when the token was invalid.
     *
     */
-    List<Movie> search(String name,String token) throws DaoException, InvalidTokenException;
+    List<Movie> search(String key,String token) throws DaoException, InvalidTokenException;
 }
