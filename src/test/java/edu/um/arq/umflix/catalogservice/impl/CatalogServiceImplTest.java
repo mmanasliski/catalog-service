@@ -21,40 +21,18 @@ import java.util.ResourceBundle;
  */
 public class CatalogServiceImplTest {
 
-    // Configuration file name
-    private static final String PROPERTIES = "conf.dao_factory";
-    private static ResourceBundle rb = ResourceBundle.getBundle(PROPERTIES);
-
-    // Key for the name of the classes that implement MovieDao and AuthenticationHandler
-    private static final String MOVIE_DAO_IMPL_K ="MOVIE_DAO_IMPL";
-    private static final String AUTH_HANDLER_IMPL_K ="AUTH_HANDLER_IMPL";
-
     /*
      *
      * This class mocks CatalogServiceImpl so it uses mocked classes for the CatalogService's methods implementation
      *
      */
     class CatalogServiceMock extends CatalogServiceImpl {
-        private AuthenticationHandler myAuthenticationHandlerImpl = Mockito.mock(AuthenticationHandlerImpl.class);
-        private MovieDao myMovieDaoImpl = Mockito.mock(MovieDaoImpl.class);
 
-
-        /*
-         *
-         * Overrides getDao so, with the given key, it returns mocked classes instead.
-         *
-        */
-        @Override
-        protected Object getDao(String dao){
-            if(dao.equals(rb.getString(MOVIE_DAO_IMPL_K))){
-                return myMovieDaoImpl;
-            } else if (dao.equals(rb.getString(AUTH_HANDLER_IMPL_K))){
-                return myAuthenticationHandlerImpl;
-            } else {
-                 logger.debug("Cannot get Dao during CatalogServiceImplTest: wrong key");
-                 throw new DaoException();
-            }
+        public CatalogServiceMock(){
+          authHandler = Mockito.mock(AuthenticationHandlerImpl.class);
+          movieDao = Mockito.mock(MovieDaoImpl.class);
         }
+
     }
 
     /*
@@ -68,15 +46,15 @@ public class CatalogServiceImplTest {
         CatalogServiceMock testedMock = new CatalogServiceMock();
         String key = null;
         String token ="Valid token";
-        Mockito.when(testedMock.myAuthenticationHandlerImpl.validateToken(token)).thenReturn(true);  //Valid token; validate returns true
+        Mockito.when(testedMock.authHandler.validateToken(token)).thenReturn(true);  //Valid token; validate returns true
         try {
             testedMock.search(key,token);
         } catch (InvalidTokenException e) {
             fail("El token fue inválido");
         }
         // Verifies the method delegation is correctly done.
-        Mockito.verify(testedMock.myAuthenticationHandlerImpl).validateToken(token);
-        Mockito.verify(testedMock.myMovieDaoImpl).getMovieList();
+        Mockito.verify(testedMock.authHandler).validateToken(token);
+        Mockito.verify(testedMock.movieDao).getMovieList();
     }
 
     /*
@@ -90,15 +68,15 @@ public class CatalogServiceImplTest {
         CatalogServiceMock testedMock = new CatalogServiceMock();
         String key = null;
         String token = "Invalid token";
-        Mockito.when(testedMock.myAuthenticationHandlerImpl.validateToken(token)).thenReturn(false); // Invalid token; validate returns false
+        Mockito.when(testedMock.authHandler.validateToken(token)).thenReturn(false); // Invalid token; validate returns false
         try {
             testedMock.search(key,token);
         } catch (Exception e) {
             assertTrue(e instanceof InvalidTokenException);
         }
         // Verifies the method delegation is correctly done and there are no interactions with MovieDaoImpl.
-        Mockito.verify(testedMock.myAuthenticationHandlerImpl).validateToken(token);
-        Mockito.verifyZeroInteractions(testedMock.myMovieDaoImpl);
+        Mockito.verify(testedMock.authHandler).validateToken(token);
+        Mockito.verifyZeroInteractions(testedMock.movieDao);
     }
 
     /*
@@ -112,15 +90,15 @@ public class CatalogServiceImplTest {
         CatalogServiceMock testedMock = new CatalogServiceMock();
         String key = "Not Null Key";
         String token = "Valid token";
-        Mockito.when(testedMock.myAuthenticationHandlerImpl.validateToken(token)).thenReturn(true);  //Valid token; validate returns true
+        Mockito.when(testedMock.authHandler.validateToken(token)).thenReturn(true);  //Valid token; validate returns true
         try {
             testedMock.search(key,token);
         } catch (InvalidTokenException e) {
             fail("El token fue inválido");
         }
         // Verifies the method delegation is correctly done.
-        Mockito.verify(testedMock.myAuthenticationHandlerImpl).validateToken(token);
-        Mockito.verify(testedMock.myMovieDaoImpl).getMovieListByKey(key);
+        Mockito.verify(testedMock.authHandler).validateToken(token);
+        Mockito.verify(testedMock.movieDao).getMovieListByKey(key);
     }
 
     /*
@@ -134,15 +112,15 @@ public class CatalogServiceImplTest {
         CatalogServiceMock testedMock = new CatalogServiceMock();
         String key = "Not Null Key";
         String token = "Invalid token";
-        Mockito.when(testedMock.myAuthenticationHandlerImpl.validateToken(token)).thenReturn(false); // Invalid token; validate returns false
+        Mockito.when(testedMock.authHandler.validateToken(token)).thenReturn(false); // Invalid token; validate returns false
         try {
             testedMock.search(key,token);
         } catch (Exception e) {
             assertTrue(e instanceof InvalidTokenException);
         }
         // Verifies the method delegation is correctly done and there are no interactions with MovieDaoImpl.
-        Mockito.verify(testedMock.myAuthenticationHandlerImpl).validateToken(token);
-        Mockito.verifyZeroInteractions(testedMock.myMovieDaoImpl);
+        Mockito.verify(testedMock.authHandler).validateToken(token);
+        Mockito.verifyZeroInteractions(testedMock.movieDao);
     }
 
 }

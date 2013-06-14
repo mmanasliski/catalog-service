@@ -1,16 +1,18 @@
 package edu.um.arq.umflix.catalogservice.impl;
 
 import edu.um.arq.umflix.catalogservice.CatalogService;
-import edu.um.arq.umflix.catalogservice.exception.DaoException;
 import edu.umflix.authenticationhandler.AuthenticationHandler;
 import edu.umflix.authenticationhandler.exceptions.InvalidTokenException;
 import edu.umflix.model.Movie;
 import edu.umflix.persistence.MovieDao;
 import org.apache.log4j.Logger;
 
+import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import java.util.List;
+import javax.jws.WebService;
+
 
 /**
  *
@@ -20,6 +22,9 @@ import java.util.List;
  * Throws InvalidTokenException instead if the token was invalid.
  *
  */
+@WebService(portName = "CatalogServicePort",
+        serviceName = "CatalogServiceWebService",
+        targetNamespace = "http://um.org/wsdl")
 @Stateless(name = "CatalogService")
 public class CatalogServiceImpl implements CatalogService {
 
@@ -39,9 +44,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     protected static Logger logger = Logger.getLogger("CatalogServiceImpl.class");
 
-    public List<Movie> search(String key,String token) throws DaoException, InvalidTokenException {
-//        MovieDao movieDao = (MovieDao)getDao(rb.getString(MOVIE_DAO_IMPL_K));
-//        AuthenticationHandler authHandler = (AuthenticationHandler)getDao(rb.getString(AUTH_HANDLER_IMPL_K));
+    public List<Movie> search(String key,String token) throws InvalidTokenException {
 
         //Authentication.
         if (authHandler.validateToken(token)){
@@ -57,27 +60,6 @@ public class CatalogServiceImpl implements CatalogService {
             throw new InvalidTokenException();
         }
 
-    }
-
-    /*
-    *
-    *   @param dao Name of the class to get.
-    *   @return Returns a new instance of the class.
-    *   @throws DaoException Throws when there was an error accessing persistence classes.
-    *
-    */
-    protected Object getDao(String dao){
-        try {
-            return Class.forName(dao).newInstance();
-        } catch (Exception exc) {
-            if(exc instanceof InstantiationException || exc instanceof IllegalAccessException ||
-                    exc instanceof ClassNotFoundException || exc instanceof NoSuchFieldException ) {
-                logger.error("Cannot getDao",exc);
-                throw new DaoException();
-            } else {
-                throw new RuntimeException(exc);
-            }
-        }
     }
 }
 
