@@ -1,15 +1,16 @@
 package edu.um.arq.umflix.catalogservice.impl;
 
 import edu.um.arq.umflix.catalogservice.CatalogService;
-import java.util.List;
-import java.util.ResourceBundle;
-
 import edu.um.arq.umflix.catalogservice.exception.DaoException;
-import edu.umflix.authenticationhandler.exceptions.InvalidTokenException;
 import edu.umflix.authenticationhandler.AuthenticationHandler;
+import edu.umflix.authenticationhandler.exceptions.InvalidTokenException;
 import edu.umflix.model.Movie;
 import edu.umflix.persistence.MovieDao;
 import org.apache.log4j.Logger;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import java.util.List;
 
 /**
  *
@@ -19,22 +20,28 @@ import org.apache.log4j.Logger;
  * Throws InvalidTokenException instead if the token was invalid.
  *
  */
-
+@Stateless(name = "CatalogService")
 public class CatalogServiceImpl implements CatalogService {
 
     // Configuration file name
-    private static final String PROPERTIES = "conf.dao_factory";
-    private static  ResourceBundle rb = ResourceBundle.getBundle(PROPERTIES);
+//    private static final String PROPERTIES = "conf.dao_factory";
+//    private static  ResourceBundle rb = ResourceBundle.getBundle(PROPERTIES);
 
     // Key for the name of the classes that implement MovieDao and AuthenticationHandler
-    private static final String MOVIE_DAO_IMPL_K ="MOVIE_DAO_IMPL";
-    private static final String AUTH_HANDLER_IMPL_K ="AUTH_HANDLER_IMPL";
+//    private static final String MOVIE_DAO_IMPL_K ="MOVIE_DAO_IMPL";
+//    private static final String AUTH_HANDLER_IMPL_K ="AUTH_HANDLER_IMPL";
+
+    @EJB(beanName = "MovieDao")
+    MovieDao movieDao;
+    @EJB(beanName = "AuthenticationService")
+    AuthenticationHandler authHandler;
+
 
     protected static Logger logger = Logger.getLogger("CatalogServiceImpl.class");
 
     public List<Movie> search(String key,String token) throws DaoException, InvalidTokenException {
-        MovieDao movieDao = (MovieDao)getDao(rb.getString(MOVIE_DAO_IMPL_K));
-        AuthenticationHandler authHandler = (AuthenticationHandler)getDao(rb.getString(AUTH_HANDLER_IMPL_K));
+//        MovieDao movieDao = (MovieDao)getDao(rb.getString(MOVIE_DAO_IMPL_K));
+//        AuthenticationHandler authHandler = (AuthenticationHandler)getDao(rb.getString(AUTH_HANDLER_IMPL_K));
 
         //Authentication.
         if (authHandler.validateToken(token)){
