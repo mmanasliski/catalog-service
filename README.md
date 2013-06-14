@@ -6,18 +6,18 @@ The CatalogService service provides information about UMFlix's movies.
 
 Requirements:
 
-    - Apache Maven 3.0.5, MAVEN_HOME/bin added to the classpath.
+    - Apache Maven 3.0.5 (http://maven.apache.org/download.cgi), MAVEN_HOME/bin added to the classpath.
 
    UMFlix dependencies that have to be previously installed with maven*:
 
-    - umflix-persistence version 1.0-SNAPSHOT
-    - autenticationhandler version 1.0-SNAPSHOT
+    - umflix-persistence version 1.0-SNAPSHOT, from: https://github.com/marshhxx/modelstorage
+    - autenticationhandler version 1.0-SNAPSHOT, from: https://github.com/haretche2/autenticationhandler
 
 *For installing them, run command "mvn install" in the dependency directory.
 
 Instructions for creating Web Service:
 
-    - 1) Install Apache Tomcat and add TOMCAT_HOME_DIR/bin directory to the classpath
+    - 1) Install Apache Tomcat (http://tomcat.apache.org/) and add TOMCAT_HOME_DIR/bin directory to the classpath
     - 2) Modify the pom.xml file located in the Catalog Service directory:
         - Comment the line <packaging>jar</packaging> (line 10) changing it to <!-- <packaging>jar</packaging> -->
         - Uncomment the line <packaging>war</packaging> (line 12) deleting the <!-- and --> symbols.
