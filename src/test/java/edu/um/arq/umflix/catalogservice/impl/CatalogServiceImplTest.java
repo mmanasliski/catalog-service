@@ -1,6 +1,5 @@
 package edu.um.arq.umflix.catalogservice.impl;
 
-import edu.um.arq.umflix.catalogservice.exception.DaoException;
 import edu.umflix.authenticationhandler.AuthenticationHandler;
 import edu.umflix.authenticationhandler.exceptions.InvalidTokenException;
 import edu.umflix.authenticationhandler.impl.AuthenticationHandlerImpl;
