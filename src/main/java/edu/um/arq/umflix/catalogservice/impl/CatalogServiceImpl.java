@@ -38,7 +38,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     @EJB(beanName = "MovieDao")
     MovieDao movieDao;
-    @EJB(beanName = "AuthenticationService")
+    @EJB(beanName = "AuthenticationHandler")
     AuthenticationHandler authHandler;
 
 
